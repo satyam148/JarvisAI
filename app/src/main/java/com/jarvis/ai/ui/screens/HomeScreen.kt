@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.jarvis.ai.automation.DeviceStatus
 import com.jarvis.ai.data.preferences.AppSettings
+import com.jarvis.ai.data.preferences.SettingsStore
 import com.jarvis.ai.ui.components.AiOrb
 import com.jarvis.ai.ui.components.GlassCard
 import kotlinx.coroutines.delay
@@ -58,6 +59,7 @@ private val quickCommands = listOf(
 @Composable
 fun HomeScreen(vm: JarvisViewModel, settings: AppSettings, onOpenChat: () -> Unit) {
     val context = LocalContext.current
+    val apiKey = remember { SettingsStore(context).geminiApiKey }
     val accent = MaterialTheme.colorScheme.primary
     var listening by remember { mutableStateOf(false) }
     var input by remember { mutableStateOf("") }
@@ -131,7 +133,7 @@ fun HomeScreen(vm: JarvisViewModel, settings: AppSettings, onOpenChat: () -> Uni
                     modifier = Modifier.weight(1f), singleLine = true,
                 )
                 IconButton(onClick = {
-                    if (input.isNotBlank()) { vm.send(input); input = ""; onOpenChat() }
+                    if (input.isNotBlank()) { vm.send(input, apiKey); input = ""; onOpenChat() }
                 }) { Icon(Icons.AutoMirrored.Filled.Send, "Send", tint = accent) }
             }
         }
