@@ -16,6 +16,10 @@ class SettingsStore(context: Context) {
     var animations: Boolean
         get() = prefs.getBoolean("animations", true)
         set(v) = prefs.edit().putBoolean("animations", v).apply()
+
+    var geminiApiKey: String
+        get() = prefs.getString("gemini_api_key", "") ?: ""
+        set(v) = prefs.edit().putString("gemini_api_key", v.trim()).apply()
 }
 
 /** Compose-observable wrapper around [SettingsStore]. */
@@ -23,6 +27,8 @@ class AppSettings(private val store: SettingsStore) {
     var accentIndex by mutableIntStateOf(store.accentIndex.coerceIn(0, 3))
         private set
     var animationsEnabled by mutableStateOf(store.animations)
+        private set
+    var geminiApiKey by mutableStateOf(store.geminiApiKey)
         private set
 
     fun updateAccent(index: Int) {
@@ -33,5 +39,10 @@ class AppSettings(private val store: SettingsStore) {
     fun updateAnimations(enabled: Boolean) {
         animationsEnabled = enabled
         store.animations = enabled
+    }
+
+    fun updateGeminiApiKey(key: String) {
+        geminiApiKey = key.trim()
+        store.geminiApiKey = key.trim()
     }
 }

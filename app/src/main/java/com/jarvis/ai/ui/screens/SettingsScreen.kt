@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,6 +57,8 @@ fun SettingsScreen(settings: AppSettings) {
 
     var mic by remember { mutableStateOf(micGranted()) }
     var notif by remember { mutableStateOf(notifGranted()) }
+    var apiKeyDraft by remember { mutableStateOf(settings.geminiApiKey) }
+    var keySaved by remember { mutableStateOf(settings.geminiApiKey.isNotBlank()) }
     val micLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { mic = it }
     val notifLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { notif = it }
 
@@ -64,7 +67,21 @@ fun SettingsScreen(settings: AppSettings) {
 
         item {
             Section("AI SETTINGS") {
-                Info("Gemini API key, model, connection test, creativity, chat history", "Phase 2")
+                Text("Gemini API key", fontSize = 14.sp)
+                OutlinedTextField(
+                    value = apiKeyDraft,
+                    onValueChange = { apiKeyDraft = it; keySaved = false },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    placeholder = { Text("Paste your API key") },
+                )
+                TextButton(onClick = {
+                    settings.updateGeminiApiKey(apiKeyDraft)
+                    keySaved = apiKeyDraft.isNotBlank()
+                }) { Text("Save API key") }
+                Text(if (keySaved) "API key saved on this device" else "API key not saved", fontSize = 12.sp, color = if (keySaved) Color(0xFF66BB6A) else Color(0xFFFFB74D))
+                Info("Model: Gemini 3.8 Flash. Chat requires internet access.", "Phase 2")
+                Text("Security: This prototype stores the key in app-private preferences. Do not publish this APK or share the key. For a public app, keep the key on a backend server.", fontSize = 12.sp, color = Color(0xFFFFB74D))
             }
         }
         item {

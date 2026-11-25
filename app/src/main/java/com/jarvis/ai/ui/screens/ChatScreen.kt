@@ -31,10 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import com.jarvis.ai.data.preferences.SettingsStore
 
 @Composable
 fun ChatScreen(vm: JarvisViewModel) {
     val accent = MaterialTheme.colorScheme.primary
+    val context = LocalContext.current
+    val apiKey = remember { SettingsStore(context).geminiApiKey }
     val listState = rememberLazyListState()
     var input by remember { mutableStateOf("") }
 
@@ -67,13 +71,16 @@ fun ChatScreen(vm: JarvisViewModel) {
                 }
             }
         }
+        if (vm.isLoading.value) {
+            Text("Jarvis soch raha hai...", color = accent, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+        }
         Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
                 value = input, onValueChange = { input = it },
                 placeholder = { Text("Message likhiye...") },
                 modifier = Modifier.weight(1f), maxLines = 4,
             )
-            IconButton(onClick = { vm.send(input); input = "" }) {
+            IconButton(onClick = { vm.send(input, apiKey); input = "" }, enabled = !vm.isLoading.value) {
                 Icon(Icons.AutoMirrored.Filled.Send, "Send", tint = accent)
             }
         }

@@ -37,3 +37,11 @@ Working: splash, dashboard (live battery + internet status, orb, mic permission,
 quick commands), chat UI (local only), bottom navigation, Settings (real permission status,
 theme + animation toggle, stored locally).
 Not yet (honestly marked in the UI): Gemini, Bunny voice, automation, Coding Studio.
+
+
+## Phase 2 - Gemini chat
+- Open Settings > AI SETTINGS, paste a Gemini API key and tap Save API key.
+- Open Chat and send a message. The app calls Gemini 3.8 Flash over HTTPS.
+- Create a key in Google AI Studio: https://aistudio.google.com/app/apikey
+- Treat the key as a password. This prototype stores it in app-private preferences; do not distribute this APK or commit/share your key. A public release should call a backend that protects the key.
+- Rebuild with GitHub Actions by pushing the updated project to the `main` branch.
